@@ -15,6 +15,7 @@ void main() {
     double totalPrinciplePaid = 0;
 
     while (mortgage.balance > 0 && month < mortgage.periods) {
+        month += 1;
 
         double interest = mortgage.balance * mortgage.monthlyRate;
         double principlePayment = basePayment - interest;
@@ -33,10 +34,12 @@ void main() {
     }
 
     double totalCost = totalInterestPaid + totalPmiPaid + totalPrinciplePaid;
+    int years = month / 12;
 
     IO.println("Mortgage loop complete");
     IO.println("Total principle paid: " + formatter.format(totalPrinciplePaid));
     IO.println("Total interest paid: " + formatter.format(totalInterestPaid));
     IO.println("Total PMI paid: " + formatter.format(totalPmiPaid));
     IO.println("Total cost of the loan: " + formatter.format(totalCost));
+    IO.println("Number of years: " + years);
 }
