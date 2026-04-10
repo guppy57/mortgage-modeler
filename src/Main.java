@@ -1,13 +1,42 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-void main() {
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    IO.println(String.format("Hello and welcome!"));
+import java.text.NumberFormat;
 
-    for (int i = 1; i <= 5; i++) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        IO.println("i = " + i);
+void main() {
+    IO.println("Hello and welcome to the Mortgage Modeler!");
+
+    NumberFormat formatter = NumberFormat.getCurrencyInstance();
+    FixedRateMortgage mortgage = new FixedRateMortgage(242500, 0.05625, 30, 0.05, 131);
+
+    int month = 0;
+    int extraPrinciple = 500;
+    double basePayment = mortgage.calculatePayment();
+
+    double totalInterestPaid = 0;
+    double totalPmiPaid = 0;
+    double totalPrinciplePaid = 0;
+
+    while (mortgage.balance > 0 && month < mortgage.periods) {
+
+        double interest = mortgage.balance * mortgage.monthlyRate;
+        double principlePayment = basePayment - interest;
+        double principleThisMonth = principlePayment + extraPrinciple;
+
+        if (principleThisMonth > mortgage.balance) {
+           principleThisMonth = mortgage.balance;
+        }
+
+        mortgage.setBalance(mortgage.balance - principleThisMonth);
+        mortgage.updateLTVandPMI();
+
+        totalInterestPaid += interest;
+        totalPmiPaid += mortgage.pmiAmount;
+        totalPrinciplePaid += principleThisMonth;
     }
+
+    double totalCost = totalInterestPaid + totalPmiPaid + totalPrinciplePaid;
+
+    IO.println("Mortgage loop complete");
+    IO.println("Total principle paid: " + formatter.format(totalPrinciplePaid));
+    IO.println("Total interest paid: " + formatter.format(totalInterestPaid));
+    IO.println("Total PMI paid: " + formatter.format(totalPmiPaid));
+    IO.println("Total cost of the loan: " + formatter.format(totalCost));
 }
